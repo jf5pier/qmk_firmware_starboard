@@ -17,6 +17,7 @@
 #define LAYER_SYMBOLS       10
 #define LAYER_QWERTY_1      11
 #define LAYER_QWERTY_2      12
+#define LAYER_ARROWS        13
 
 
 // Layer aliases.
@@ -33,11 +34,12 @@
 #define SYM LAYER_SYMBOLS
 #define QW1 LAYER_QWERTY_1
 #define QW2 LAYER_QWERTY_2
+#define ARW LAYER_ARROWS
 
 // Create the actual layers.
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_STENO] = LAYOUT(
-        XXXXXXX, STN_S1,  STN_TL,  STN_PL,  STN_HL,                    STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
+        TO(ARW), STN_S1,  STN_TL,  STN_PL,  STN_HL,                    STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
         TO(SWC), STN_S2,  STN_KL,  STN_WL,  STN_RL,  STN_NUM, STN_ST4, STN_RR,  STN_BR,  STN_GR,  STN_SR,  STN_ZR,
                                             STN_A,   STN_O,   STN_E,   STN_U
     ),
@@ -54,7 +56,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_GAMING_2] = LAYOUT(
         KC_P,    KC_Z,    KC_X,    KC_C,    KC_V,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         KC_L,    KC_Q,    KC_M,    KC_E,    KC_R,    KC_T,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, TO(SWC),
-                                            KC_LGUI, XXXXXXX, XXXXXXX, XXXXXXX
+                                            KC_ESC,  KC_LGUI, XXXXXXX, XXXXXXX
     ),
     [LAYER_GAMING_3] = LAYOUT(
         KC_9,    KC_8,    KC_7,    KC_6,    KC_5,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
@@ -63,12 +65,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [LAYER_MOUSE] = LAYOUT(
         XXXXXXX, XXXXXXX, KC_WH_U, KC_MS_U, KC_WH_D,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        TO(SWC), XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX, KC_ACL0, KC_ACL1, KC_ACL2, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX, KC_ACL0, KC_ACL1, KC_ACL2, XXXXXXX, TO(SWC),
                                             KC_BTN1, KC_BTN2, XXXXXXX, XXXXXXX
     ),
     [LAYER_MEDIA] = LAYOUT(
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   KC_MUTE, KC_VOLD, KC_VOLU, XXXXXXX, KC_SLEP,
-        TO(SWC), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_RIGHT, KC_LEFT, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_RIGHT, KC_LEFT, XXXXXXX, XXXXXXX, TO(SWC),
                                             XXXXXXX, XXXXXXX, KC_MPLY, XXXXXXX
     ),
     [LAYER_TEST] = LAYOUT(
@@ -78,17 +80,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [LAYER_ALPHA_1] = LAYOUT(
         XXXXXXX, XXXXXXX, KC_L,    KC_R,    KC_M,                      KC_U,    KC_F,    KC_D,    XXXXXXX, XXXXXXX,
-        TO(SWC), KC_O,    KC_S,    KC_N,    KC_T, OSM(MOD_LGUI), OSM(MOD_RSFT), KC_E,    KC_A,    KC_H,    KC_I,    XXXXXXX,
+        XXXXXXX, KC_O,    KC_S,    KC_N,    KC_T, OSM(MOD_LGUI), OSM(MOD_RSFT), KC_E,    KC_A,    KC_H,    KC_I,    TO(SWC),
                                             KC_SPACE, KC_C,   KC_W,    OSL(AL2)
     ),
     [LAYER_ALPHA_2] = LAYOUT(
         XXXXXXX, XXXXXXX, XXXXXXX, KC_QUOT, KC_J,                      KC_Q,    KC_DOT,  KC_COMM, XXXXXXX, XXXXXXX,
-        TO(SWC), KC_X,    KC_P,    KC_V,    KC_G,    XXXXXXX, XXXXXXX, KC_Y,    KC_K,    KC_B,    KC_Z,    XXXXXXX,
+        XXXXXXX, KC_X,    KC_P,    KC_V,    KC_G,    XXXXXXX, XXXXXXX, KC_Y,    KC_K,    KC_B,    KC_Z,    XXXXXXX,
                                             KC_BACKSPACE, KC_TAB, KC_ESC, KC_ENTER
     ),
     [LAYER_SYMBOLS] = LAYOUT(
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        TO(SWC), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
                                             XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
     ),
     [LAYER_QWERTY_1] = LAYOUT(
@@ -101,16 +103,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, XXXXXXX,
                                             KC_BACKSPACE, KC_TAB, KC_ESC, KC_ENTER
     ),
-    // [] = LAYOUT(
-    //     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-    //     TO(SWC), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-    //                                         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-    // ),
+    [LAYER_ARROWS] = LAYOUT(
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, KC_UP,   XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, KC_LCTL, KC_LALT, KC_LSFT, KC_LGUI, XXXXXXX, XXXXXXX, KC_LEFT, KC_DOWN, KC_RIGHT, XXXXXXX, TO(SWC),
+                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
+    ),
 
     // A blank layer commented out, just to make adding new layers a little easier.
     // [] = LAYOUT(
     //     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-    //     TO(SWC), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+    //     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
     //                                         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
     // ),
 };
