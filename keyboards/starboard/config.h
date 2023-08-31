@@ -18,3 +18,8 @@
 //#define NO_ACTION_LAYER
 //#define NO_ACTION_TAPPING
 //#define NO_ACTION_ONESHOT
+
+
+// Setup taipo following instructions at https://github.com/dlip/qmk_firmware/blob/chouchou/users/dlip/taipo.md
+#define TAIPO_TAP_TIMEOUT 150
+#define ONESHOT_TIMEOUT 500
