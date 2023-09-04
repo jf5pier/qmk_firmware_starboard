@@ -21,5 +21,5 @@
 
 
 // Setup taipo following instructions at https://github.com/dlip/qmk_firmware/blob/chouchou/users/dlip/taipo.md
-#define TAIPO_TAP_TIMEOUT 150
+#define TAIPO_TAP_TIMEOUT 50
 #define ONESHOT_TIMEOUT 500
