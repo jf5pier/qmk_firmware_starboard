@@ -6,6 +6,8 @@
 #include "users/dlip/custom_keycodes.h"
 // #include "users/dlip/taipo.h"  // Not needed because I copy-pasted the code from taipo.c a bit lower
 
+#define DEBUG 0 // 1 for debug mode, 0 otherwise.
+
 // Layer IDs.
 #define LAYER_STENO         14
 #define LAYER_SWITCH        1
@@ -127,6 +129,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // ),
 };
 
+void custom_debug(char *str) {
+    if (DEBUG) {
+        send_string(str);
+    }
+}
+
+void custom_warn(char *str) {
+    send_string("WARN ");
+    send_string(str);
+}
+
+
 /////////////////////
 // Copied from taipo.c
 /////////////////////
@@ -135,20 +149,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #define TAIPO_TAP_TIMEOUT 150
 #endif
 
-typedef struct {
-    uint16_t keycode;
-    bool     hold;
-    bool     hold_handled;
-} keypress;
+// typedef struct {
+//     uint16_t keycode;
+//     bool     hold;
+//     bool     hold_handled;
+// } keypress;
 
-typedef struct {
-    uint16_t combo;
-    uint16_t timer;
-    keypress key;
-} state;
+// typedef struct {
+//     uint16_t combo;
+//     uint16_t timer;
+//     keypress key;
+// } state;
 
-static state left_state;
-static state right_state;
+// static state left_state;
+// static state right_state;
 
 // Right hand top row, left to right: i n s r
 // Right hand bot row, left to right: e t o a
@@ -164,18 +178,18 @@ static state right_state;
 #define it 1 << 8
 #define ot 1 << 9
 
-static void clear_state(state* state) {
-    state->combo            = 0;
-    state->timer            = 0;
-    state->key.keycode      = KC_NO;
-    state->key.hold         = false;
-    state->key.hold_handled = false;
-}
+// static void clear_state(state* state) {
+//     state->combo            = 0;
+//     state->timer            = 0;
+//     state->key.keycode      = KC_NO;
+//     state->key.hold         = false;
+//     state->key.hold_handled = false;
+// }
 
-static void clear_all_state(void) {
-    clear_state(&left_state);
-    clear_state(&right_state);
-}
+// static void clear_all_state(void) {
+//     clear_state(&left_state);
+//     clear_state(&right_state);
+// }
 
 static uint16_t determine_key(uint16_t val) {
     switch (val) {
@@ -701,123 +715,257 @@ static uint16_t determine_key(uint16_t val) {
     return KC_NO;
 }
 
-static void handle_key(keypress* key) {
-    uint8_t mods = 0;
-    switch (key->keycode) {
-        case KC_MOD_GA:
-            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT);
-            break;
-        case KC_MOD_GC:
-            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL);
-            break;
-        case KC_MOD_GS:
-            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LSFT);
-            break;
-        case KC_MOD_AC:
-            mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL);
-            break;
-        case KC_MOD_AS:
-            mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT);
-            break;
-        case KC_MOD_CS:
-            mods = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
-            break;
-        case KC_MOD_GAC:
-            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL);
-            break;
-        case KC_MOD_GAS:
-            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT);
-            break;
-        case KC_MOD_GCS:
-            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
-            break;
-        case KC_MOD_ACS:
-            mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
-            break;
-        case KC_MOD_GACS:
-            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
-            break;
-        case KC_LGUI:
-        case KC_LALT:
-        case KC_RALT:
-        case KC_LCTL:
-        case KC_LSFT:
-            mods = MOD_BIT(key->keycode);
-            break;
-        case KC_LAYER0:
-            layer_move(0);
-            clear_all_state();
-            break;
-        case KC_LAYER1:
-            layer_move(1);
-            clear_all_state();
-            break;
-        case KC_LAYER2:
-            layer_move(2);
-            clear_all_state();
-            break;
-        case KC_LAYER3:
-            layer_move(3);
-            clear_all_state();
-            break;
-        default:
-            if (key->hold_handled) {
-                unregister_code16(key->keycode);
-            } else if (key->hold) {
-                register_code16(key->keycode);
-                key->hold_handled = true;
-            } else {
-                tap_code16(key->keycode);
-            }
-    }
-    if (mods) {
-        if (key->hold_handled) {
-            del_mods(mods);
-            send_keyboard_report();
-        } else if (key->hold) {
-            add_mods(mods);
-            send_keyboard_report();
-            key->hold_handled = true;
-        } else {
-            add_oneshot_mods(mods);
+// static void handle_key(keypress* key) {
+//     uint8_t mods = 0;
+//     switch (key->keycode) {
+//         case KC_MOD_GA:
+//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT);
+//             break;
+//         case KC_MOD_GC:
+//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL);
+//             break;
+//         case KC_MOD_GS:
+//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LSFT);
+//             break;
+//         case KC_MOD_AC:
+//             mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL);
+//             break;
+//         case KC_MOD_AS:
+//             mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT);
+//             break;
+//         case KC_MOD_CS:
+//             mods = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
+//             break;
+//         case KC_MOD_GAC:
+//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL);
+//             break;
+//         case KC_MOD_GAS:
+//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT);
+//             break;
+//         case KC_MOD_GCS:
+//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
+//             break;
+//         case KC_MOD_ACS:
+//             mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
+//             break;
+//         case KC_MOD_GACS:
+//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
+//             break;
+//         case KC_LGUI:
+//         case KC_LALT:
+//         case KC_RALT:
+//         case KC_LCTL:
+//         case KC_LSFT:
+//             mods = MOD_BIT(key->keycode);
+//             break;
+//         // case KC_LAYER0:
+//         //     layer_move(0);
+//         //     clear_all_state();
+//         //     break;
+//         // case KC_LAYER1:
+//         //     layer_move(1);
+//         //     clear_all_state();
+//         //     break;
+//         // case KC_LAYER2:
+//         //     layer_move(2);
+//         //     clear_all_state();
+//         //     break;
+//         // case KC_LAYER3:
+//         //     layer_move(3);
+//         //     clear_all_state();
+//         //     break;
+//         default:
+//             if (key->hold_handled) {
+//                 unregister_code16(key->keycode);
+//             } else if (key->hold) {
+//                 register_code16(key->keycode);
+//                 key->hold_handled = true;
+//             } else {
+//                 tap_code16(key->keycode);
+//             }
+//     }
+//     if (mods) {
+//         if (key->hold_handled) {
+//             del_mods(mods);
+//             send_keyboard_report();
+//         } else if (key->hold) {
+//             add_mods(mods);
+//             send_keyboard_report();
+//             key->hold_handled = true;
+//         } else {
+//             add_oneshot_mods(mods);
+//         }
+//     }
+// }
+
+/////////////////////
+// Custom code
+/////////////////////
+
+struct combo {
+    uint16_t combo; // Bitwise OR of the keys pressed. Each key is `keycode - TP_TLP`.
+    uint16_t keycode; // The actual keycode this combo sends.
+};
+
+#define MAX_HELD_COMBOS 5 // This MUST be at least 2 to avoid null reference errors.
+
+struct combo_node {
+    struct combo combo;
+    struct combo_node* prev;
+    struct combo_node* next;
+};
+
+struct combo_node_pool {
+    struct combo_node combo_nodes[MAX_HELD_COMBOS];
+    bool in_use[MAX_HELD_COMBOS];
+};
+
+struct held_combos {
+    struct combo_node* root;
+    struct combo_node* head;
+};
+
+struct state {
+    struct held_combos held_combos;
+    struct combo_node_pool combo_node_pool;
+    uint16_t timer;
+    uint16_t in_progress_combo;
+};
+
+static struct state left_state;
+static struct state right_state;
+
+// Note: if no more elements are available, this deactivates the longest-held
+// combo and recycles it (by returning it).
+struct combo_node* get_combo_node_from_pool(struct state* state) {
+    for (int k = 0; k < MAX_HELD_COMBOS; k++) {
+        if (!state->combo_node_pool.in_use[k]) {
+            state->combo_node_pool.in_use[k] = true;
+            return &state->combo_node_pool.combo_nodes[k];
         }
     }
+
+    // All elements are in use. So deactivate the longest-held combo and return
+    // that element.
+    struct combo_node* node = state->held_combos.root;
+    state->held_combos.root = node->next;
+    state->held_combos.root->prev = NULL;
+    unregister_code16(node->combo.keycode);
+    node->prev = NULL;
+    node->next = NULL;
+
+    return node;
 }
 
+void add_held_combo(struct state* state, uint16_t combo, uint16_t keycode) {
+    struct combo_node* node = get_combo_node_from_pool(state);
+    node->combo.combo = combo;
+    node->combo.keycode = keycode;
+
+    if (state->held_combos.root == NULL) {
+        state->held_combos.root = node;
+        node->prev = NULL;
+    }
+    if (state->held_combos.head != NULL) {
+        state->held_combos.head->next = node;
+    }
+
+    node->prev = state->held_combos.head;
+    node->next = NULL;
+    state->held_combos.head = node;
+
+    register_code16(keycode);
+}
+
+// combo_bit is a one-hot number.
+void remove_held_combo(struct state* state, uint16_t combo_bit) {
+    struct combo_node* cur = state->held_combos.root;
+    if (cur == NULL) {
+        custom_debug("cur is null");
+    }
+
+    while (cur != NULL) {
+        if (cur->combo.combo & combo_bit) {
+            // Release this combo.
+            custom_debug("released");
+            unregister_code16(cur->combo.keycode);
+
+            // Remove this combo from the list.
+            // TODO: mutex the following code down to the return.
+            if (state->held_combos.root == cur) {
+                state->held_combos.root = cur->next;
+            }
+            if (state->held_combos.head == cur) {
+                state->held_combos.head = cur->prev;
+            }
+            if (cur->next != NULL) {
+                cur->next->prev = cur->prev;
+            }
+            if (cur->prev != NULL) {
+                cur->prev->next = cur->next;
+            }
+
+            // TODO: use address arithmetic to remove this loop.
+            for (int k = 0; k < MAX_HELD_COMBOS; k++) {
+                if (&state->combo_node_pool.combo_nodes[k] == cur) {
+                    state->combo_node_pool.in_use[k] = false;
+                    return;
+                }
+            }
+
+            // We shouldn't get here.
+            custom_warn("did not find node");
+        }
+
+        cur = cur->next;
+    }
+
+    custom_debug("already released");
+
+    // The combo for this key was already released, so don't do anything.
+    return;
+}
+
+
 bool taipo_process_record_user(uint16_t keycode, keyrecord_t* record) {
-    uint16_t key   = keycode - TP_TLP;
-    state*   state = (key / 10) ? &right_state : &left_state;
+    uint16_t key = keycode - TP_TLP;
+    uint16_t combo_bit = (1 << (key % 10));
+    struct state* state = (key / 10) ? &right_state : &left_state;
 
     if (record->event.pressed) {
-        if (state->key.keycode != KC_NO) {
-            handle_key(&state->key);
-            clear_state(state);
+        if (state->in_progress_combo == 0) {
+            // Start the timer; once the timer ends, this combo will be processed
+            // and cannot be added to.
+            state->timer = (record->event.time + TAIPO_TAP_TIMEOUT) | 1;
         }
-        state->timer = (record->event.time + TAIPO_TAP_TIMEOUT) | 1;
-        state->combo |= 1 << (key % 10);
+
+        state->in_progress_combo |= combo_bit;
     } else {
-        if (!state->key.hold) {
-            state->key.keycode = determine_key(state->combo);
-        }
-        handle_key(&state->key);
-        clear_state(state);
+        custom_debug("key up");
+        remove_held_combo(state, combo_bit);
     }
+
     return false;
 }
 
+void process_state(struct state* state) {
+    if (state->timer > 0 && timer_expired(timer_read(), state->timer)) {
+        // Activate the in-progress combo, if it's valid.
+        uint16_t keycode = determine_key(state->in_progress_combo);
+        if (keycode != KC_NO) {
+            custom_debug("calling add_held_combo");
+            add_held_combo(state, state->in_progress_combo, keycode);
+        }
+
+        // Reset the in-progress combo.
+        state->timer = 0;
+        state->in_progress_combo = 0;
+    }
+}
+
 void taipo_matrix_scan_user(void) {
-    if (left_state.timer && timer_expired(timer_read(), left_state.timer)) {
-        left_state.key.keycode = determine_key(left_state.combo);
-        left_state.key.hold    = true;
-        handle_key(&left_state.key);
-        left_state.timer = 0;
-    }
-    if (right_state.timer && timer_expired(timer_read(), right_state.timer)) {
-        right_state.key.keycode = determine_key(right_state.combo);
-        right_state.key.hold    = true;
-        handle_key(&right_state.key);
-        right_state.timer = 0;
-    }
+    process_state(&left_state);
+    process_state(&right_state);
 }
 
 /////////////////////
