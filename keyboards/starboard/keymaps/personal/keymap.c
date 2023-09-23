@@ -178,6 +178,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_E);
         case i | it:
             return KC_DOT;
+        case i | it | ot:
+            return KC_1;
 
         case n:
             return KC_W;
@@ -185,6 +187,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_W);
         case n | it:
             return KC_UP;
+        case n | it | ot:
+            return KC_2;
 
         case s:
             return KC_V;
@@ -192,6 +196,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_V);
         case s | it:
             return KC_COMMA;
+        case s | it | ot:
+            return KC_3;
 
         case e:
             return KC_D;
@@ -199,6 +205,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_D);
         case e | it:
             return KC_RIGHT;
+        case e | it | ot:
+            return KC_4;
 
         case t:
             return KC_S;
@@ -206,6 +214,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_S);
         case t | it:
             return KC_DOWN;
+        case t | it | ot:
+            return KC_5;
 
         case o:
             return KC_A;
@@ -213,6 +223,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_A);
         case o | it:
             return KC_LEFT;
+        case o | it | ot:
+            return KC_6;
 
         case a:
             return KC_Z;
@@ -337,7 +349,7 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_G);
         case e | o | it:
             return KC_QUOTE;
-        case e | e | it | ot:
+        case e | o | it | ot:
             return KC_DOUBLE_QUOTE;
 
         case e | a:
@@ -378,6 +390,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_B);
         case  i | n | s| it:
             return KC_GRAVE;
+        case  i | n | s| it | ot:
+            return KC_0;
 
         case e | t | o:
             return KC_ENTER;
@@ -390,6 +404,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_P);
         case  e | n | s| it:
             return KC_TILDE;
+        case  e | n | s| it | ot:
+            return KC_7;
 
         case i | t | o:
             return KC_X;
@@ -397,6 +413,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_X);
         case  i | t | o| it:
             return KC_PERCENT;
+        case  i | t | o| it | ot:
+            return KC_8;
 
         case e | n | o:
             return KC_J;
@@ -404,6 +422,8 @@ static uint16_t determine_key(uint16_t val) {
             return S(KC_J);
         case  e | n | o| it:
             return KC_CIRCUMFLEX; // The ^ symbol.
+        case  e | n | o| it | ot:
+            return KC_9;
 
 
     }
