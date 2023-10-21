@@ -563,6 +563,16 @@ struct state {
 
 static struct state left_state;
 static struct state right_state;
+static uint16_t modifiers_set_time;
+
+void remove_all_mods(void) {
+    // Clear any modifiers.
+    if (get_mods() != 0) {
+        clear_mods();
+        send_keyboard_report();
+        rgblight_sethsv(10, 255, 50);
+    }
+}
 
 // Note: if no more elements are available, this deactivates the longest-held
 // combo and recycles it (by returning it).
@@ -589,7 +599,10 @@ struct combo_node* get_combo_node_from_pool(struct state* state) {
 void add_held_combo(struct state* state, uint16_t combo, uint16_t keycode) {
     uint8_t mods = get_mods_from_keycode(keycode);
     if (mods != 0) {
-        add_oneshot_mods(mods);
+        add_mods(mods);
+        send_keyboard_report();
+        rgblight_sethsv(10, 100, 50);
+        modifiers_set_time = timer_read();
         return;
     }
 
@@ -610,6 +623,7 @@ void add_held_combo(struct state* state, uint16_t combo, uint16_t keycode) {
     state->held_combos.head = node;
 
     register_code16(keycode);
+    remove_all_mods();
 }
 
 // combo_bit is a one-hot number.
@@ -701,6 +715,10 @@ void process_state(struct state* state) {
 void taipo_matrix_scan_user(void) {
     process_state(&left_state);
     process_state(&right_state);
+
+    if (timer_read() - modifiers_set_time > 1000) { // In milliseconds
+        remove_all_mods();
+    }
 }
 
 /////////////////////
