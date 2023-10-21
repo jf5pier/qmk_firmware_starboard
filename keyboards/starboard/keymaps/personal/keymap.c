@@ -235,7 +235,6 @@ static uint16_t determine_key(uint16_t val) {
         case a | it | ot:
             return S(KC_TAB);
 
-
         // Two fingers.
         case i | n:
             return KC_T;
@@ -321,7 +320,6 @@ static uint16_t determine_key(uint16_t val) {
         case n | a | it:
             return KC_DOLLAR;
 
-
         case s | e:
             return KC_K;
         case s | e | ot:
@@ -360,7 +358,6 @@ static uint16_t determine_key(uint16_t val) {
             return KC_SEMICOLON;
         case e | a | it | ot:
             return KC_COLON;
-
 
         case t | o:
             return KC_I;
@@ -425,93 +422,110 @@ static uint16_t determine_key(uint16_t val) {
         case  e | n | o| it | ot:
             return KC_9;
 
+        // One modifier.
+        case i | e:
+            return KC_LGUI;
+        case n | t:
+            return KC_LCTL;
+        case s | o:
+            return KC_LSFT;
+        case r | a:
+            return KC_LALT;
 
+        // Two modifiers.
+        case i | e | n | t:
+            return KC_MOD_GC;
+        case i | e | s | o:
+            return KC_MOD_GS;
+        case i | e | r | a:
+            return KC_MOD_GA;
+
+        case n | t | s | o:
+            return KC_MOD_CS;
+        case n | t | r | a:
+            return KC_MOD_AC;
+
+        case s | o | r | a:
+            return KC_MOD_AS;
+
+        // Three modifiers.
+        case i | e | n | t | s | o:
+            return KC_MOD_GCS;
+        case i | e | n | t | r | a:
+            return KC_MOD_GAC;
+        case i | e | s | o | r | a:
+            return KC_MOD_GCS;
+        case n | t | s | o | r | a:
+            return KC_MOD_ACS;
+
+        // Four modifiers.
+        case i | e | n | t | s | o | r | a:
+            return KC_MOD_GACS;
     }
     return KC_NO;
 }
 
-// static void handle_key(keypress* key) {
-//     uint8_t mods = 0;
-//     switch (key->keycode) {
-//         case KC_MOD_GA:
-//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT);
-//             break;
-//         case KC_MOD_GC:
-//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL);
-//             break;
-//         case KC_MOD_GS:
-//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LSFT);
-//             break;
-//         case KC_MOD_AC:
-//             mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL);
-//             break;
-//         case KC_MOD_AS:
-//             mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT);
-//             break;
-//         case KC_MOD_CS:
-//             mods = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
-//             break;
-//         case KC_MOD_GAC:
-//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL);
-//             break;
-//         case KC_MOD_GAS:
-//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT);
-//             break;
-//         case KC_MOD_GCS:
-//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
-//             break;
-//         case KC_MOD_ACS:
-//             mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
-//             break;
-//         case KC_MOD_GACS:
-//             mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
-//             break;
-//         case KC_LGUI:
-//         case KC_LALT:
-//         case KC_RALT:
-//         case KC_LCTL:
-//         case KC_LSFT:
-//             mods = MOD_BIT(key->keycode);
-//             break;
-//         // case KC_LAYER0:
-//         //     layer_move(0);
-//         //     clear_all_state();
-//         //     break;
-//         // case KC_LAYER1:
-//         //     layer_move(1);
-//         //     clear_all_state();
-//         //     break;
-//         // case KC_LAYER2:
-//         //     layer_move(2);
-//         //     clear_all_state();
-//         //     break;
-//         // case KC_LAYER3:
-//         //     layer_move(3);
-//         //     clear_all_state();
-//         //     break;
-//         default:
-//             if (key->hold_handled) {
-//                 unregister_code16(key->keycode);
-//             } else if (key->hold) {
-//                 register_code16(key->keycode);
-//                 key->hold_handled = true;
-//             } else {
-//                 tap_code16(key->keycode);
-//             }
-//     }
-//     if (mods) {
-//         if (key->hold_handled) {
-//             del_mods(mods);
-//             send_keyboard_report();
-//         } else if (key->hold) {
-//             add_mods(mods);
-//             send_keyboard_report();
-//             key->hold_handled = true;
-//         } else {
-//             add_oneshot_mods(mods);
-//         }
-//     }
-// }
+static uint8_t get_mods_from_keycode(uint16_t keycode) {
+    uint8_t mods = 0;
+    switch (keycode) {
+        case KC_MOD_GA:
+            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT);
+            break;
+        case KC_MOD_GC:
+            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL);
+            break;
+        case KC_MOD_GS:
+            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LSFT);
+            break;
+        case KC_MOD_AC:
+            mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL);
+            break;
+        case KC_MOD_AS:
+            mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT);
+            break;
+        case KC_MOD_CS:
+            mods = MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
+            break;
+        case KC_MOD_GAC:
+            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL);
+            break;
+        case KC_MOD_GAS:
+            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LSFT);
+            break;
+        case KC_MOD_GCS:
+            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
+            break;
+        case KC_MOD_ACS:
+            mods = MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
+            break;
+        case KC_MOD_GACS:
+            mods = MOD_BIT(KC_LGUI) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LCTL) | MOD_BIT(KC_LSFT);
+            break;
+        case KC_LGUI:
+        case KC_LALT:
+        case KC_RALT:
+        case KC_LCTL:
+        case KC_LSFT:
+            mods = MOD_BIT(keycode);
+            break;
+        default:
+            return 0;
+    }
+
+    return mods;
+    // if (mods) {
+    //     if (key->hold_handled) {
+    //         del_mods(mods);
+    //         send_keyboard_report();
+    //     } else if (key->hold) {
+    //         add_mods(mods);
+    //         send_keyboard_report();
+    //         key->hold_handled = true;
+    //     } else {
+    //         add_oneshot_mods(mods);
+    //     }
+    // }
+}
 
 /////////////////////
 // Custom code
@@ -573,6 +587,12 @@ struct combo_node* get_combo_node_from_pool(struct state* state) {
 }
 
 void add_held_combo(struct state* state, uint16_t combo, uint16_t keycode) {
+    uint8_t mods = get_mods_from_keycode(keycode);
+    if (mods != 0) {
+        add_oneshot_mods(mods);
+        return;
+    }
+
     struct combo_node* node = get_combo_node_from_pool(state);
     node->combo.combo = combo;
     node->combo.keycode = keycode;
@@ -689,6 +709,10 @@ void taipo_matrix_scan_user(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (IS_LAYER_ON(LAYER_TAIPO)) {
+        if (keycode == TO(SWC)) {
+            return true;
+        }
+
         return taipo_process_record_user(keycode, record);
     }  else {
         return true;
@@ -697,4 +721,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 void matrix_scan_user(void) {
     taipo_matrix_scan_user();
+}
+
+// Set LED per layer.
+layer_state_t layer_state_set_user(layer_state_t state) {
+    switch (get_highest_layer(state)) {
+        case LAYER_TAIPO:
+            rgblight_sethsv(10, 255, 50);
+            break;
+        default:
+            rgblight_sethsv(96, 255, 30);
+            break;
+    }
+
+    return state;
+}
+
+// Set LED color to the color for the default layer on startup.
+void keyboard_post_init_user(void) {
+    rgblight_enable();
+    rgblight_sethsv(10, 255, 50);
 }
