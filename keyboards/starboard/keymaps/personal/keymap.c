@@ -243,7 +243,7 @@ static uint16_t determine_key(uint16_t val) {
         case i | n | it:
             return KC_LEFT_PAREN;
         case i | n | it | ot:
-            return KC_RIGHT_PAREN;
+            return KC_LEFT_CURLY_BRACE;
 
         case i | s:
             return KC_N;
@@ -288,9 +288,9 @@ static uint16_t determine_key(uint16_t val) {
         case n | s | ot:
             return S(KC_O);
         case n | s | it:
-            return KC_LEFT_CURLY_BRACE;
+            return KC_LEFT_BRACKET;
         case n | s | it | ot:
-            return KC_RIGHT_CURLY_BRACE;
+            return KC_LEFT_ANGLE_BRACKET;
 
         case n | e:
             return KC_C;
@@ -337,9 +337,9 @@ static uint16_t determine_key(uint16_t val) {
         case e | t | ot:
             return S(KC_F);
         case e | t | it:
-            return KC_LEFT_BRACKET;
+            return KC_RIGHT_PAREN;
         case e | t | it | ot:
-            return KC_RIGHT_BRACKET;
+            return KC_RIGHT_CURLY_BRACE;
 
         case e | o:
             return KC_G;
@@ -364,7 +364,7 @@ static uint16_t determine_key(uint16_t val) {
         case t | o | ot:
             return S(KC_I);
         case t | o | it:
-            return KC_LEFT_ANGLE_BRACKET;
+            return KC_RIGHT_BRACKET;
         case t | o | it | ot:
             return KC_RIGHT_ANGLE_BRACKET;
 
@@ -393,7 +393,7 @@ static uint16_t determine_key(uint16_t val) {
         case e | t | o:
             return KC_ENTER;
         case  e | t | o | it:
-                return S(KC_ESC);
+            return KC_ESC;
 
         case e | n | s:
             return KC_P;
