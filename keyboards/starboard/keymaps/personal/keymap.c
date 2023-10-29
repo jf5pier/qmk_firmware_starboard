@@ -9,7 +9,7 @@
 #define DEBUG 0 // 1 for debug mode, 0 otherwise.
 
 // Layer IDs.
-#define LAYER_STENO         14
+#define LAYER_TAIPO         0
 #define LAYER_SWITCH        1
 #define LAYER_GAMING_1      2
 #define LAYER_GAMING_2      3
@@ -23,7 +23,7 @@
 #define LAYER_QWERTY_1      11
 #define LAYER_QWERTY_2      12
 #define LAYER_ARROWS        13
-#define LAYER_TAIPO         0
+#define LAYER_STENO         14
 
 
 // Layer aliases.
@@ -45,11 +45,11 @@
 
 // Create the actual layers.
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [LAYER_STENO] = LAYOUT(
-        TO(ARW), STN_S1,  STN_TL,  STN_PL,  STN_HL,                    STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
-        TO(SWC), STN_S2,  STN_KL,  STN_WL,  STN_RL,  STN_NUM, STN_ST4, STN_RR,  STN_BR,  STN_GR,  STN_SR,  STN_ZR,
-                                            STN_A,   STN_O,   STN_E,   STN_U
-    ),
+    [LAYER_TAIPO] = LAYOUT(
+        XXXXXXX, TP_TLP,  TP_TLR,  TP_TLM,  TP_TLI,                    TP_TRI,  TP_TRM,  TP_TRR,  TP_TRP,  XXXXXXX,
+        XXXXXXX, TP_BLP,  TP_BLR,  TP_BLM,  TP_BLI,  XXXXXXX, XXXXXXX, TP_BRI,  TP_BRM,  TP_BRR,  TP_BRP,  TO(SWC),
+                                            TP_LIT,  TP_LOT,  TP_ROT,  TP_RIT
+     ),
     [LAYER_SWITCH] = LAYOUT(
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         TO(TST), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, TO(AL1), TO(QW1), TO(TPO), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
@@ -115,11 +115,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX, KC_LCTL, KC_LALT, KC_LSFT, KC_LGUI, XXXXXXX, XXXXXXX, KC_LEFT, KC_DOWN, KC_RIGHT, XXXXXXX, TO(SWC),
                                             XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
     ),
-    [LAYER_TAIPO] = LAYOUT(
-        XXXXXXX, TP_TLP,  TP_TLR,  TP_TLM,  TP_TLI,                    TP_TRI,  TP_TRM,  TP_TRR,  TP_TRP,  XXXXXXX,
-        XXXXXXX, TP_BLP,  TP_BLR,  TP_BLM,  TP_BLI,  XXXXXXX, XXXXXXX, TP_BRI,  TP_BRM,  TP_BRR,  TP_BRP,  TO(SWC),
-                                            TP_LIT,  TP_LOT,  TP_ROT,  TP_RIT
-     ),
+    [LAYER_STENO] = LAYOUT(
+        TO(ARW), STN_S1,  STN_TL,  STN_PL,  STN_HL,                    STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
+        TO(SWC), STN_S2,  STN_KL,  STN_WL,  STN_RL,  STN_NUM, STN_ST4, STN_RR,  STN_BR,  STN_GR,  STN_SR,  STN_ZR,
+                                            STN_A,   STN_O,   STN_E,   STN_U
+    ),
 
     // A blank layer commented out, just to make adding new layers a little easier.
     // [] = LAYOUT(
@@ -149,17 +149,14 @@ void custom_warn(char *str) {
 #define TAIPO_TAP_TIMEOUT 150
 #endif
 
-// Right hand top row, left to right: i n s r
-// Right hand bot row, left to right: e t o a
-
-#define r 1 << 0
-#define s 1 << 1
-#define n 1 << 2
-#define i 1 << 3
-#define a 1 << 4
-#define o 1 << 5
-#define t 1 << 6
-#define e 1 << 7
+#define pu 1 << 0
+#define ru 1 << 1
+#define mu 1 << 2
+#define iu 1 << 3
+#define pd 1 << 4
+#define rd 1 << 5
+#define md 1 << 6
+#define id 1 << 7
 #define it 1 << 8
 #define ot 1 << 9
 
@@ -167,299 +164,164 @@ static uint16_t determine_key(uint16_t val) {
     switch (val) {
         // Zero fingers.
         case it:
-            return KC_BSPC;
+            return A(KC_BACKSPACE);
         case ot:
             return KC_SPC;
 
         // One finger.
-        case i:
+        case iu:
             return KC_E;
-        case i | ot:
-            return S(KC_E);
-        case i | it:
-            return KC_DOT;
-        case i | it | ot:
-            return KC_1;
+        case iu | it:
+            return KC_T;
+        case iu | ot:
+            return KC_H;
+        case iu | it | ot:
+            return KC_R;
 
-        case n:
+        case mu:
             return KC_W;
-        case n | ot:
-            return S(KC_W);
-        case n | it:
-            return KC_UP;
-        case n | it | ot:
-            return KC_2;
+        case mu | it:
+            return KC_I;
+        case mu | ot:
+            return KC_L;
+        case mu | it | ot:
+            return KC_F;
 
-        case s:
-            return KC_V;
-        case s | ot:
-            return S(KC_V);
-        case s | it:
-            return KC_COMMA;
-        case s | it | ot:
-            return KC_3;
+        case ru:
+            return KC_Y;
+        case ru | it:
+            return KC_Q;
+        // case ru | ot:
+            // return KC_;
+        // case ru | it | ot:
+            // return KC_;
 
-        case e:
+        case pu:
+            return KC_BACKSPACE;
+        case pu | it:
+            return G(KC_BACKSPACE);
+        // case pu | ot:
+        //     return KC_;
+        // case pu | it | ot:
+        //     return KC_;
+
+        case id:
             return KC_D;
-        case e | ot:
-            return S(KC_D);
-        case e | it:
-            return KC_RIGHT;
-        case e | it | ot:
-            return KC_4;
+        case id | it:
+            return KC_O;
+        case id | ot:
+            return KC_N;
+        case id | it | ot:
+            return KC_M;
 
-        case t:
+        case md:
             return KC_S;
-        case t | ot:
-            return S(KC_S);
-        case t | it:
-            return KC_DOWN;
-        case t | it | ot:
-            return KC_5;
+        case md | it:
+            return KC_U;
+        case md | ot:
+            return KC_C;
+        case md | it | ot:
+            return KC_G;
 
-        case o:
+        case rd:
             return KC_A;
-        case o | ot:
-            return S(KC_A);
-        case o | it:
-            return KC_LEFT;
-        case o | it | ot:
-            return KC_6;
+        case rd | it:
+            return KC_P;
+        case rd | ot:
+            return KC_B;
+        case rd | it | ot:
+            return KC_K;
 
-        case a:
+        case pd:
             return KC_Z;
-        case a | ot:
-            return S(KC_Z);
-        case a | it:
-            return KC_TAB;
-        case a | it | ot:
-            return S(KC_TAB);
+        case pd | it:
+            return KC_V;
+        case pd | ot:
+            return KC_X;
+        case pd | it | ot:
+            return KC_J;
 
         // Two fingers.
-        case i | n:
-            return KC_T;
-        case i | n | ot:
-                return S(KC_T);
-        case i | n | it:
+        case iu | mu:
             return KC_LEFT_PAREN;
-        case i | n | it | ot:
+        case iu | mu | it:
             return KC_LEFT_CURLY_BRACE;
-
-        case i | s:
-            return KC_N;
-        case i | s | ot:
-            return S(KC_N);
-        case i | s | it:
-            return KC_EQUAL;
-        case i | s | it | ot:
-            return KC_UNDERSCORE;
-
-        // case i | e:
-        //     return KC_NO;
-
-        case i | t:
-            return KC_H;
-        case i | t | ot:
-            return S(KC_H);
-        case i | t | it:
-            return KC_BACKSLASH;
-
-        case i | o:
-            return KC_R;
-        case i | o | ot:
-            return S(KC_R);
-        case i | o | it:
-            return KC_PIPE;
-        case i | o | it | ot:
-            return KC_AMPERSAND;
-
-        case i | a:
-            return KC_L;
-        case i | a | ot:
-            return S(KC_L);
-        case i | a | it:
-            return KC_AT;
-        case i | a | it | ot:
-            return KC_HASH;
-
-
-        case n | s:
-            return KC_O;
-        case n | s | ot:
-            return S(KC_O);
-        case n | s | it:
+        case iu | mu | ot:
             return KC_LEFT_BRACKET;
-        case n | s | it | ot:
+        case iu | mu | it | ot:
             return KC_LEFT_ANGLE_BRACKET;
 
-        case n | e:
-            return KC_C;
-        case n | e | ot:
-            return S(KC_C);
-        case n | e | it:
-            return KC_SLASH;
-        case n | e | it | ot:
-            return KC_ASTERISK;
-
-        // case n | t:
-        //     return KC_NO
-
-        case n | o:
-            return KC_U;
-        case n | o | ot:
-            return S(KC_U);
-        case n | o | it:
-            return KC_MINUS;
-        case n | o | it | ot:
-            return KC_PLUS;
-
-        case n | a:
-            return KC_M;
-        case n | a | ot:
-            return S(KC_M);
-        case n | a | it:
-            return KC_DOLLAR;
-
-        case s | e:
-            return KC_K;
-        case s | e | ot:
-            return S(KC_K);
-
-        // case s | t:
-        //     return KC_NO
-        // case s | o:
-        //     return KC_NO
-        // case s | a:
-        //     return KC_NO
-
-        case e | t:
-            return KC_F;
-        case e | t | ot:
-            return S(KC_F);
-        case e | t | it:
+        case id | md:
             return KC_RIGHT_PAREN;
-        case e | t | it | ot:
+        case id | md | it:
             return KC_RIGHT_CURLY_BRACE;
-
-        case e | o:
-            return KC_G;
-        case e | o | ot:
-            return S(KC_G);
-        case e | o | it:
-            return KC_QUOTE;
-        case e | o | it | ot:
-            return KC_DOUBLE_QUOTE;
-
-        case e | a:
-            return KC_Y;
-        case e | a | ot:
-            return S(KC_Y);
-        case e | a | it:
-            return KC_SEMICOLON;
-        case e | a | it | ot:
-            return KC_COLON;
-
-        case t | o:
-            return KC_I;
-        case t | o | ot:
-            return S(KC_I);
-        case t | o | it:
+        case id | md | ot:
             return KC_RIGHT_BRACKET;
-        case t | o | it | ot:
+        case id | md | it | ot:
             return KC_RIGHT_ANGLE_BRACKET;
 
-        case t | a:
-            return KC_Q;
-        case t | a | ot:
-            return S(KC_Q);
-        case t | a | it:
-            return KC_QUESTION;
-        case t | a | it | ot:
+        case mu | ru:
+            return KC_DOT;
+        case mu | ru | it:
+            return KC_COMMA;
+        case mu | ru | ot:
             return KC_EXCLAIM;
+        case mu | ru | it | ot:
+            return KC_QUESTION;
 
-        // case o | a:
-        //     return KC_NO
+        case md | rd:
+            return KC_QUOTE;
+        case md | rd | it:
+            return KC_DOUBLE_QUOTE;
+        case md | rd | ot:
+            return KC_SEMICOLON;
+        case md | rd | it | ot:
+            return KC_COLON;
 
-        // Three fingers
-        case i | n | s:
-            return KC_B;
-        case  i | n | s| ot:
-            return S(KC_B);
-        case  i | n | s| it:
-            return KC_GRAVE;
-        case  i | n | s| it | ot:
-            return KC_0;
-
-        case e | t | o:
+        // Three fingers.
+        case id | md | rd:
             return KC_ENTER;
-        case  e | t | o | it:
-            return KC_ESC;
-
-        case e | n | s:
-            return KC_P;
-        case  e | n | s| ot:
-            return S(KC_P);
-        case  e | n | s| it:
-            return KC_TILDE;
-        case  e | n | s| it | ot:
-            return KC_7;
-
-        case i | t | o:
-            return KC_X;
-        case  i | t | o| ot:
-            return S(KC_X);
-        case  i | t | o| it:
-            return KC_PERCENT;
-        case  i | t | o| it | ot:
-            return KC_8;
-
-        case e | n | o:
-            return KC_J;
-        case  e | n | o| ot:
-            return S(KC_J);
-        case  e | n | o| it:
-            return KC_CIRCUMFLEX; // The ^ symbol.
-        case  e | n | o| it | ot:
-            return KC_9;
+        case id | md | rd | it:
+            return KC_ESCAPE;
 
         // One modifier.
-        case i | e:
+        case iu | id:
             return KC_LGUI;
-        case n | t:
+        case mu | md:
             return KC_LCTL;
-        case s | o:
+        case ru | rd:
             return KC_LSFT;
-        case r | a:
+        case pu | pd:
             return KC_LALT;
 
         // Two modifiers.
-        case i | e | n | t:
+        case iu | id | mu | md:
             return KC_MOD_GC;
-        case i | e | s | o:
+        case iu | id | ru | rd:
             return KC_MOD_GS;
-        case i | e | r | a:
+        case iu | id | pu | pd:
             return KC_MOD_GA;
 
-        case n | t | s | o:
+        case mu | md | ru | rd:
             return KC_MOD_CS;
-        case n | t | r | a:
+        case mu | md | pu | pd:
             return KC_MOD_AC;
 
-        case s | o | r | a:
+        case ru | rd | pu | pd:
             return KC_MOD_AS;
 
         // Three modifiers.
-        case i | e | n | t | s | o:
+        case iu | id | mu | md | ru | rd:
             return KC_MOD_GCS;
-        case i | e | n | t | r | a:
+        case iu | id | mu | md | pu | pd:
             return KC_MOD_GAC;
-        case i | e | s | o | r | a:
+        case iu | id | ru | rd | pu | pd:
             return KC_MOD_GCS;
-        case n | t | s | o | r | a:
+        case mu | md | ru | rd | pu | pd:
             return KC_MOD_ACS;
 
         // Four modifiers.
-        case i | e | n | t | s | o | r | a:
+        case iu | id | mu | md | ru | rd | pu | pd:
             return KC_MOD_GACS;
     }
     return KC_NO;
