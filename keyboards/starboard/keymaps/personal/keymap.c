@@ -9,16 +9,16 @@
 #define DEBUG 0 // 1 for debug mode, 0 otherwise.
 
 // Layer IDs.
-#define LAYER_TAIPO         0
-#define LAYER_STENO         1
-#define LAYER_ALPHA_1       2
-#define LAYER_ALPHA_2       3
-#define LAYER_PUNCTUATION   4
-#define LAYER_NUMBERS       5
-#define LAYER_ARROWS        6
-#define LAYER_SYMBOLS       7
-#define LAYER_FKEYS         8
-#define LAYER_COMMANDS      9
+#define LAYER_ALPHA_1       0
+#define LAYER_ALPHA_2       1
+#define LAYER_PUNCTUATION   2
+#define LAYER_SYMBOLS       3
+#define LAYER_COMMANDS      4
+#define LAYER_ARROWS        5
+#define LAYER_NUMBERS       6
+#define LAYER_FKEYS         7
+#define LAYER_TAIPO         8
+#define LAYER_STENO         9
 
 #define LAYER_SWITCH        10
 
@@ -36,8 +36,52 @@
 #define CMD LAYER_COMMANDS
 #define SWC LAYER_SWITCH
 
+enum extra_keycodes {
+    EK_QU = SAFE_RANGE + 100, // Don't overwrite the taipo custom keycodes.
+};
+
 // Create the actual layers.
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+    [LAYER_ALPHA_1] = LAYOUT(
+        TO(SWC), XXXXXXX, KC_C,    KC_H,    KC_D,                      KC_U,    KC_R,    KC_L,    XXXXXXX, XXXXXXX,
+        XXXXXXX, KC_M,    KC_I,    KC_N,    KC_T,    KC_W,    KC_F,    KC_E,    KC_A,    KC_O,    KC_S,    XXXXXXX,
+                                            OSL(CMD), OSL(AL2), KC_SPC, KC_LSFT
+    ),
+    [LAYER_ALPHA_2] = LAYOUT(
+        TO(SWC), XXXXXXX, XXXXXXX, KC_Y,    KC_B,                      KC_Z,    EK_QU,   KC_Q,    XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, KC_G,    KC_J,    KC_P,    XXXXXXX, XXXXXXX, KC_K,    KC_V,    KC_X,    XXXXXXX, XXXXXXX,
+                                            XXXXXXX, XXXXXXX, OSL(PNC), OSL(SYM)
+    ),
+    [LAYER_PUNCTUATION] = LAYOUT(
+        TO(SWC), KC_LABK, KC_LBRC, KC_LCBR, KC_LPRN,                   KC_RPRN, KC_RCBR, KC_RBRC, KC_RABK, XXXXXXX,
+        KC_BSPC, KC_EXLM, KC_COLN, KC_QUOT, KC_DOT,  KC_ESC, KC_ENTER, KC_COMM, KC_DQUO, KC_SCLN, KC_QUES, XXXXXXX,
+                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
+    ),
+    [LAYER_SYMBOLS] = LAYOUT(
+        TO(SWC), KC_PERC, KC_DLR,  KC_AT,   KC_AMPR,                   KC_PIPE, KC_HASH, KC_CIRC, KC_TILD, XXXXXXX,
+        XXXXXXX, KC_UNDS, KC_ASTR, KC_EQL,  KC_SLSH, XXXXXXX, XXXXXXX, KC_BSLS, KC_EXLM, KC_PLUS, KC_MINS, XXXXXXX,
+                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
+    ),
+    [LAYER_COMMANDS] = LAYOUT(
+        TO(SWC), G(KC_A), G(KC_W), G(KC_S), G(KC_F),                   G(KC_R), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, G(KC_Z), G(KC_X), G(KC_C), G(KC_V), XXXXXXX, XXXXXXX, G(KC_N), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+                                            XXXXXXX, XXXXXXX, OSL(ARW), OSL(NUM)
+    ),
+    [LAYER_ARROWS] = LAYOUT(
+        TO(SWC), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   KC_TAB,  S(KC_TAB), KC_Q,  XXXXXXX, XXXXXXX,
+        XXXXXXX, KC_LCTL, KC_LSFT, KC_LALT, KC_LGUI, XXXXXXX, KC_BSPC, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, XXXXXXX,
+                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
+    ),
+    [LAYER_NUMBERS] = LAYOUT(
+        TO(SWC), XXXXXXX, KC_6,    KC_5,    KC_4,                          XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, KC_3,    KC_2,    KC_1,    LGUI_T(KC_0), XXXXXXX, XXXXXXX, RGUI_T(KC_7), KC_8,    KC_9,    KC_GRV, XXXXXXX,
+                                            XXXXXXX,      XXXXXXX, XXXXXXX, XXXXXXX
+    ),
+    [LAYER_FKEYS] = LAYOUT(
+        TO(SWC), XXXXXXX, KC_F6,   KC_F5,   KC_F4,                     KC_F10,  KC_F11,  KC_F12,  XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, KC_F3,   KC_F2,   KC_F1,   XXXXXXX, XXXXXXX, KC_F7,   KC_F8,   KC_F9,   XXXXXXX, XXXXXXX,
+                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
+    ),
     [LAYER_TAIPO] = LAYOUT(
         TO(SWC), TP_TLP,  TP_TLR,  TP_TLM,  TP_TLI,                    TP_TRI,  TP_TRM,  TP_TRR,  TP_TRP,  XXXXXXX,
         XXXXXXX, TP_BLP,  TP_BLR,  TP_BLM,  TP_BLI,  XXXXXXX, XXXXXXX, TP_BRI,  TP_BRM,  TP_BRR,  TP_BRP,  TO(SWC),
@@ -47,46 +91,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         TO(SWC), STN_S1,  STN_TL,  STN_PL,  STN_HL,                    STN_FR,  STN_PR,  STN_LR,  STN_TR,  STN_DR,
         TO(ARW), STN_S2,  STN_KL,  STN_WL,  STN_RL,  STN_NUM, STN_ST4, STN_RR,  STN_BR,  STN_GR,  STN_SR,  STN_ZR,
                                             STN_A,   STN_O,   STN_E,   STN_U
-    ),
-    [LAYER_ALPHA_1] = LAYOUT(
-        TO(SWC), XXXXXXX, KC_C,    KC_H,    KC_D,                      KC_U,    KC_R,    KC_L,    XXXXXXX, XXXXXXX,
-        XXXXXXX, KC_M,    KC_I,    KC_N,    KC_T,    KC_W,    KC_F,    KC_E,    KC_A,    KC_O,    KC_S,    XXXXXXX,
-                                            KC_LSFT, OSL(PNC), OSL(AL2), KC_SPC
-    ),
-    [LAYER_ALPHA_2] = LAYOUT(
-        TO(SWC), XXXXXXX, XXXXXXX, KC_Y,    KC_B,                      KC_Z,    KC_Q,    KC_Q,    XXXXXXX, XXXXXXX,
-        XXXXXXX, XXXXXXX, KC_G,    KC_J,    KC_P,    XXXXXXX, XXXXXXX, KC_V,    KC_K,    KC_X,    XXXXXXX, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-    ),
-    [LAYER_PUNCTUATION] = LAYOUT(
-        TO(SWC), KC_LABK, KC_LBRC, KC_LCBR, KC_LPRN,                   KC_RPRN, KC_RCBR, KC_RBRC, KC_RABK, XXXXXXX,
-        XXXXXXX, KC_EXLM, KC_COLN, KC_QUOT, KC_DOT,  XXXXXXX, XXXXXXX, KC_COMM, KC_DQUO, KC_SCLN, KC_QUES, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-    ),
-    [LAYER_NUMBERS] = LAYOUT(
-        TO(SWC), XXXXXXX, KC_6,    KC_5,    KC_4,                          XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, KC_3,    KC_2,    KC_1,    LGUI_T(KC_0), XXXXXXX, XXXXXXX, RGUI_T(KC_7), KC_8,    KC_9,    KC_GRV, XXXXXXX,
-                                            XXXXXXX,      XXXXXXX, XXXXXXX, XXXXXXX
-    ),
-    [LAYER_ARROWS] = LAYOUT(
-        TO(SWC), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   KC_TAB,  S(KC_TAB), KC_Q,  XXXXXXX, XXXXXXX,
-        XXXXXXX, KC_LCTL, KC_LSFT, KC_LALT, KC_LGUI, XXXXXXX, XXXXXXX, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-    ),
-    [LAYER_SYMBOLS] = LAYOUT(
-        TO(SWC), KC_PERC, KC_DLR,  KC_AT,   KC_AMPR,                   KC_PIPE, KC_HASH, KC_CIRC, KC_TILD, XXXXXXX,
-        XXXXXXX, KC_UNDS, KC_ASTR, KC_EQL,  KC_SLSH, XXXXXXX, XXXXXXX, KC_BSLS, KC_EXLM, KC_PLUS, KC_MINS, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-    ),
-    [LAYER_FKEYS] = LAYOUT(
-        TO(SWC), XXXXXXX, KC_F6,   KC_F5,   KC_F4,                     KC_F10,  KC_F11,  KC_F12,  XXXXXXX, XXXXXXX,
-        XXXXXXX, XXXXXXX, KC_F3,   KC_F2,   KC_F1,   XXXXXXX, XXXXXXX, KC_F7,   KC_F8,   KC_F9,   XXXXXXX, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-    ),
-    [LAYER_COMMANDS] = LAYOUT(
-        TO(SWC), G(KC_A), G(KC_W), G(KC_S), G(KC_F),                   G(KC_R), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, G(KC_Z), G(KC_X), G(KC_C), G(KC_V), XXXXXXX, XXXXXXX, G(KC_N), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
     ),
 
     [LAYER_SWITCH] = LAYOUT(
@@ -568,13 +572,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
 
         return taipo_process_record_user(keycode, record);
-    }  else {
-        return true;
     }
+
+    switch (keycode) {
+    case EK_QU:
+        if (record->event.pressed) {
+            send_string("qu");
+            // tap_code(KC_Q);
+            // tap_code(KC_U);
+        }
+    }
+
+    return true;
 };
 
 void matrix_scan_user(void) {
-    taipo_matrix_scan_user();
+    if (IS_LAYER_ON(LAYER_TAIPO)) {
+        taipo_matrix_scan_user();
+    }
 }
 
 // Set LED per layer.
@@ -583,8 +598,37 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         case LAYER_TAIPO:
             rgblight_sethsv(10, 255, 50);
             break;
+        case LAYER_STENO:
+            rgblight_sethsv(20, 255, 50);
+            break;
+        case LAYER_ALPHA_1:
+            rgblight_sethsv(160, 180, 50);
+            break;
+        case LAYER_ALPHA_2:
+            rgblight_sethsv(160, 180, 50);
+            break;
+        case LAYER_PUNCTUATION:
+            rgblight_sethsv(50, 255, 50);
+            break;
+        case LAYER_NUMBERS:
+            rgblight_sethsv(60, 255, 50);
+            break;
+        case LAYER_ARROWS:
+            rgblight_sethsv(95, 235, 50);
+            break;
+        case LAYER_SYMBOLS:
+            rgblight_sethsv(80, 255, 50);
+            break;
+        case LAYER_FKEYS:
+            rgblight_sethsv(90, 255, 50);
+            break;
+        case LAYER_COMMANDS:
+            rgblight_sethsv(100, 255, 50);
+            break;
+        case LAYER_SWITCH:
+            rgblight_sethsv(110, 225, 50);
         default:
-            rgblight_sethsv(96, 255, 30);
+            rgblight_sethsv(0, 255, 30);
             break;
     }
 
@@ -594,5 +638,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 // Set LED color to the color for the default layer on startup.
 void keyboard_post_init_user(void) {
     rgblight_enable();
-    rgblight_sethsv(10, 255, 50);
+    rgblight_sethsv(160, 180, 50);
+
 }
