@@ -45,16 +45,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_ALPHA_1] = LAYOUT(
         TO(SWC), XXXXXXX, KC_C,    KC_H,    KC_D,                      KC_U,    KC_R,    KC_L,    XXXXXXX, XXXXXXX,
         XXXXXXX, KC_M,    KC_I,    KC_N,    KC_T,    KC_W,    KC_F,    KC_E,    KC_A,    KC_O,    KC_S,    XXXXXXX,
-                                            OSL(CMD), OSL(AL2), KC_SPC, KC_LSFT
+                                            OSL(CMD), OSL(AL2), KC_SPC, OSM(MOD_LSFT)
     ),
     [LAYER_ALPHA_2] = LAYOUT(
         TO(SWC), XXXXXXX, XXXXXXX, KC_Y,    KC_B,                      KC_Z,    EK_QU,   KC_Q,    XXXXXXX, XXXXXXX,
         XXXXXXX, XXXXXXX, KC_G,    KC_J,    KC_P,    XXXXXXX, XXXXXXX, KC_K,    KC_V,    KC_X,    XXXXXXX, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, OSL(PNC), OSL(SYM)
+                                            XXXXXXX, XXXXXXX, MO(PNC), MO(SYM)
     ),
     [LAYER_PUNCTUATION] = LAYOUT(
         TO(SWC), KC_LABK, KC_LBRC, KC_LCBR, KC_LPRN,                   KC_RPRN, KC_RCBR, KC_RBRC, KC_RABK, XXXXXXX,
-        KC_BSPC, KC_EXLM, KC_COLN, KC_QUOT, KC_DOT,  KC_ESC, KC_ENTER, KC_COMM, KC_DQUO, KC_SCLN, KC_QUES, XXXXXXX,
+        KC_BSPC, KC_EXLM, KC_SCLN, KC_QUOT, KC_COMM,  KC_ESC, KC_ENTER, KC_DOT, KC_DQUO, KC_COLN, KC_QUES, XXXXXXX,
                                             XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
     ),
     [LAYER_SYMBOLS] = LAYOUT(
@@ -64,8 +64,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [LAYER_COMMANDS] = LAYOUT(
         TO(SWC), G(KC_A), G(KC_W), G(KC_S), G(KC_F),                   G(KC_R), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, G(KC_Z), G(KC_X), G(KC_C), G(KC_V), XXXXXXX, XXXXXXX, G(KC_N), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, OSL(ARW), OSL(NUM)
+        XXXXXXX, G(KC_Z), G(KC_X), G(KC_C), G(KC_V), G(KC_SPC), XXXXXXX, G(KC_N), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+                                            XXXXXXX, XXXXXXX, MO(ARW), MO(NUM)
     ),
     [LAYER_ARROWS] = LAYOUT(
         TO(SWC), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   KC_TAB,  S(KC_TAB), KC_Q,  XXXXXXX, XXXXXXX,
@@ -578,8 +578,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case EK_QU:
         if (record->event.pressed) {
             send_string("qu");
-            // tap_code(KC_Q);
-            // tap_code(KC_U);
         }
     }
 
