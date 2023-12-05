@@ -43,8 +43,8 @@ enum extra_keycodes {
 // Create the actual layers.
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_ALPHA_1] = LAYOUT(
-        TO(SWC), XXXXXXX, KC_C,    KC_H,    KC_D,                      KC_U,    KC_R,    KC_L,    XXXXXXX, XXXXXXX,
-        XXXXXXX, KC_M,    KC_I,    KC_N,    KC_T,    KC_W,    KC_F,    KC_E,    KC_A,    KC_O,    KC_S,    XXXXXXX,
+        TO(SWC),       C(KC_B),   KC_C,    KC_H,    KC_D,                      KC_U,    KC_R,    KC_L,    KC_TAB,  OSM(MOD_LALT),
+        OSM(MOD_LCTL), KC_M,      KC_I,    KC_N,    KC_T,    KC_W,    KC_F,    KC_E,    KC_A,    KC_O,    KC_S,    OSM(MOD_LGUI),
                                             OSL(CMD), OSL(AL2), KC_SPC, OSM(MOD_LSFT)
     ),
     [LAYER_ALPHA_2] = LAYOUT(
