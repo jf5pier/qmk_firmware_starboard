@@ -50,7 +50,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_ALPHA_2] = LAYOUT(
         TO(SWC), XXXXXXX, XXXXXXX, KC_Y,    KC_B,                      KC_Z,    EK_QU,   KC_Q,    XXXXXXX, XXXXXXX,
         XXXXXXX, XXXXXXX, KC_G,    KC_J,    KC_P,    XXXXXXX, XXXXXXX, KC_K,    KC_V,    KC_X,    XXXXXXX, XXXXXXX,
-                                            XXXXXXX, XXXXXXX, MO(PNC), MO(SYM)
+                                            MO(ARW), XXXXXXX, MO(PNC), MO(SYM)
     ),
     [LAYER_PUNCTUATION] = LAYOUT(
         TO(SWC), KC_LABK, KC_LBRC, KC_LCBR, KC_LPRN,                   KC_RPRN, KC_RCBR, KC_RBRC, KC_RABK, XXXXXXX,
