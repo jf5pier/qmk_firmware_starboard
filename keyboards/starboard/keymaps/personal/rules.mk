@@ -5,3 +5,6 @@ VIRSTER_ENABLE = yes  # Setting to `no` will cause steno keycodes to not work.
 
 # Allow mouse control.
 MOUSEKEY_ENABLE = yes
+
+# Allow combos.
+COMBO_ENABLE = yes

@@ -4,7 +4,6 @@
 #include "keymap_steno.h"
 
 #include "users/dlip/custom_keycodes.h"
-// #include "users/dlip/taipo.h"  // Not needed because I copy-pasted the code from taipo.c a bit lower
 
 #define DEBUG 0 // 1 for debug mode, 0 otherwise.
 
@@ -38,6 +37,17 @@
 
 enum extra_keycodes {
     EK_QU = SAFE_RANGE + 100, // Don't overwrite the taipo custom keycodes.
+    EK_EXPAND,
+};
+
+enum combos {
+  CB_EXPAND,
+};
+
+const uint16_t PROGMEM dt_combo[] = {KC_D, KC_T, COMBO_END};
+
+combo_t key_combos[] = {
+  [CB_EXPAND] = COMBO(dt_combo, EK_EXPAND),
 };
 
 // Create the actual layers.
@@ -118,6 +128,16 @@ void custom_warn(char *str) {
     send_string(str);
 }
 
+void process_combo_event(uint16_t combo_index, bool pressed) {
+  send_string("doing combo");
+  switch(combo_index) {
+    case CB_EXPAND:
+      if (pressed) {
+        SEND_STRING("john.doe@example.com");
+      }
+      break;
+  }
+}
 
 /////////////////////
 // Copied from taipo.c
@@ -565,6 +585,53 @@ void taipo_matrix_scan_user(void) {
 // From instructions at https://github.com/dlip/qmk_firmware/blob/chouchou/users/dlip/taipo.md
 /////////////////////
 
+#define EXPAND_MAX_KEYS 100
+struct expand_state {
+    char keys_pressed[EXPAND_MAX_KEYS];
+    uint16_t keys_pressed_index;
+    uint16_t last_key_press_time;
+} expand_state;
+
+// Make an array of strings where the key are the keys that were pressed and the values are the strings to expand to.
+typedef struct key_value {
+    char* key;
+    char* value;
+} key_value;
+
+key_value expansions[] = {
+    {"hw", "Hello, world!"},
+    {"wo", "without"},
+};
+
+void process_expand(void) {
+    // Iterate all the expansions.
+    // TODO: make this more efficient.
+    size_t expansions_size = sizeof(expansions) / sizeof(expansions[0]);
+    for (int i = 0; i < expansions_size; i++) {
+        if (strlen(expansions[i].key) != expand_state.keys_pressed_index) {
+            continue;
+        }
+
+        // Iterate all the keys pressed.
+        bool match = true;
+        for (int k = 0; k < expand_state.keys_pressed_index; k++) {
+            if (expansions[i].key[k] != expand_state.keys_pressed[k]) {
+                match = false;
+                break;
+            }
+        }
+
+        if (match) {
+            // Erase the keys pressed, then send the expansion.
+            for (int k = 0; k < expand_state.keys_pressed_index; k++) {
+                tap_code(KC_BACKSPACE);
+            }
+            send_string(expansions[i].value);
+            break;
+        }
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (IS_LAYER_ON(LAYER_TAIPO)) {
         if (keycode == TO(SWC)) {
@@ -579,6 +646,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (record->event.pressed) {
             send_string("qu");
         }
+    case EK_EXPAND:
+        if (record->event.pressed) {
+            process_expand();
+        }
+    }
+
+    // Clear the expand state when the spacebar is pressed.
+    if (keycode == KC_SPACE || keycode == EK_EXPAND) {
+        expand_state.keys_pressed_index = 0;
+    } else {
+        // Add the keycode to the expand state, if it's a letter.
+        if (keycode >= KC_A && keycode <= KC_Z && record->event.pressed) {
+            char ch = keycode - KC_A + 'a';
+
+            // Wrap around if we've reached the end of the array.
+            if (expand_state.keys_pressed_index >= EXPAND_MAX_KEYS) {
+                expand_state.keys_pressed_index = 0;
+            }
+
+            expand_state.keys_pressed[expand_state.keys_pressed_index] = ch;
+            expand_state.keys_pressed_index++;
+            expand_state.last_key_press_time = timer_read();
+        }
     }
 
     return true;
@@ -587,6 +677,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void matrix_scan_user(void) {
     if (IS_LAYER_ON(LAYER_TAIPO)) {
         taipo_matrix_scan_user();
+    }
+
+    // If the expand timer is up, reset the expand state.
+    if (timer_read() - expand_state.last_key_press_time > 3000) { // In milliseconds
+        expand_state.keys_pressed_index = 0;
     }
 }
 
