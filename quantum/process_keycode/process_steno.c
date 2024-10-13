@@ -16,7 +16,10 @@
 #include "process_steno.h"
 #include "quantum_keycodes.h"
 #include "keymap_steno.h"
+#include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
+#include "timer.h"
 #ifdef VIRTSER_ENABLE
 #    include "virtser.h"
 #endif
@@ -24,9 +27,18 @@
 #    include "eeprom.h"
 #endif
 
+#define DESLOPPE 200
+
 // All steno keys that have been pressed to form this chord,
 // stored in MAX_STROKE_SIZE groups of 8-bit arrays.
 static uint8_t chord[MAX_STROKE_SIZE] = {0};
+
+#ifdef DESLOPPE
+// On final chord reslease, all keys that were released DESLOPPE ms ago are Sloppys keys and are
+// removed from chord
+static uint16_t desloppe_timers[MAX_STROKE_SIZE * 8] = {0};
+#endif
+
 // The number of physical keys actually being held down.
 // This is not always equal to the number of 1 bits in `chord` because it is possible to
 // simultaneously press down four keys, then release three of those four keys and then press yet
@@ -45,6 +57,9 @@ static const steno_mode_t mode = STENO_MODE_BOLT;
 
 static inline void steno_clear_chord(void) {
     memset(chord, 0, sizeof(chord));
+#ifdef DESLOPPE
+    memset(desloppe_timers, 0, sizeof(desloppe_timers));
+#endif /* ifdef DESLOPPE */
 }
 
 #ifdef STENO_ENABLE_GEMINI
@@ -75,6 +90,22 @@ bool add_gemini_key_to_chord(uint8_t key) {
     // The 0th steno key of the group has bit=0b01000000, the 1st has bit=0b00100000, etc.
     const uint8_t bit = 1 << (6 - intra_group_idx);
     chord[group_idx] |= bit;
+    return false;
+}
+/**
+ * @precondition: `key` is depressed
+ */
+bool remove_gemini_key_from_chord(uint8_t key) {
+    // Although each group of the packet is 8 bits long, the MSB is reserved
+    // to indicate whether that byte is the first byte of the packet (MSB=1)
+    // or one of the remaining five bytes of the packet (MSB=0).
+    // As a consequence, only 7 out of the 8 bits are left to be used as a bit array
+    // for the steno keys of that group.
+    const int group_idx       = key / 7;
+    const int intra_group_idx = key - group_idx * 7;
+    // The 0th steno key of the group has bit=0b01000000, the 1st has bit=0b00100000, etc.
+    const uint8_t bit = 1 << (6 - intra_group_idx);
+    chord[group_idx] &= ~bit;
     return false;
 }
 #endif // STENO_ENABLE_GEMINI
@@ -114,11 +145,64 @@ static void send_steno_chord_bolt(void) {
  * @precondition: `key` is pressed
  */
 static bool add_bolt_key_to_chord(uint8_t key) {
+    uint8_t boltcode                = pgm_read_byte(boltmap + key);
+    chord[TXB_GET_GROUP(boltcode)] ~= boltcode;
+    return false;
+}
+
+/**
+ * @precondition: `key` is depressed
+ */
+static bool remove_bolt_key_from_chord(uint8_t key) {
     uint8_t boltcode = pgm_read_byte(boltmap + key);
-    chord[TXB_GET_GROUP(boltcode)] |= boltcode;
+    chord[TXB_GET_GROUP(boltcode)] &= !boltcode;
     return false;
 }
 #endif // STENO_ENABLE_BOLT
+#ifdef DESLOPPE
+
+/**
+ * @precondition: `key` is depressed and desloppify is activated
+ */
+bool set_steno_depress_timer(uint8_t key) {
+    desloppe_timers[key] = timer_read();
+    return false;
+}
+
+/**
+ * @precondition: `key` is depressed and desloppify is activated
+ */
+bool remove_sloppy_keys(steno_mode_t mode) {
+    uint16_t now = timer_read();
+    for (uint8_t key = 0; key < MAX_STROKE_SIZE * 8; key++) {
+        if (desloppe_timers[key] != 0) {
+            if (TIMER_DIFF_16(now, desloppe_timers[key]) > DESLOPPE) {
+                switch (mode) {
+#    ifdef STENO_ENABLE_GEMINI
+                    case STENO_MODE_GEMINI:
+                        remove_gemini_key_from_chord(key);
+                        break;
+#    endif
+#    ifdef STENO_ENABLE_BOLT
+                    case STENO_MODE_BOLT:
+                        remove_bolt_key_from_chord(key);
+                        break;
+#    endif
+                    default:
+                        break;
+                }
+            }
+            desloppe_timers[key] = 0;
+        }
+    }
+    return false;
+}
+
+#endif /* ifdef DESLOPPE           \
+                                 \ \
+bool set_steno_depress_timer() {   \
+                                 \ \
+} */
 
 #ifdef STENO_COMBINEDMAP
 /* Used to look up when pressing the middle row key to combine two consonant or vowel keys */
@@ -220,9 +304,17 @@ bool process_steno(uint16_t keycode, keyrecord_t *record) {
                 if (n_pressed_keys > 0) {
                     // User hasn't released all keys yet,
                     // so the chord cannot be sent
+
+#ifdef DESLOPPE
+                    set_steno_depress_timer(keycode - QK_STENO);
+#endif // ifdef DESLOPPE
                     return false;
                 }
                 n_pressed_keys = 0;
+#ifdef DESLOPPE
+                remove_sloppy_keys(mode);
+#endif // ifdef DESLOPPE
+
                 if (!send_steno_chord_user(mode, chord)) {
                     steno_clear_chord();
                     return false;
