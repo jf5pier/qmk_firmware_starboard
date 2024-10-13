@@ -145,8 +145,8 @@ static void send_steno_chord_bolt(void) {
  * @precondition: `key` is pressed
  */
 static bool add_bolt_key_to_chord(uint8_t key) {
-    uint8_t boltcode                = pgm_read_byte(boltmap + key);
-    chord[TXB_GET_GROUP(boltcode)] ~= boltcode;
+    uint8_t boltcode = pgm_read_byte(boltmap + key);
+    chord[TXB_GET_GROUP(boltcode)] |= boltcode;
     return false;
 }
 
@@ -155,7 +155,7 @@ static bool add_bolt_key_to_chord(uint8_t key) {
  */
 static bool remove_bolt_key_from_chord(uint8_t key) {
     uint8_t boltcode = pgm_read_byte(boltmap + key);
-    chord[TXB_GET_GROUP(boltcode)] &= !boltcode;
+    chord[TXB_GET_GROUP(boltcode)] &= ~boltcode;
     return false;
 }
 #endif // STENO_ENABLE_BOLT
